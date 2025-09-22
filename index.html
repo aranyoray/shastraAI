@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ShastraAI - Legal Document Analysis</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        input, textarea, button { width: 100%; padding: 10px; margin: 5px 0; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        .result { background: #f8f9fa; padding: 15px; border-radius: 3px; margin-top: 10px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>ShastraAI - Legal Document Analysis</h1>
+    
+    <div class="section">
+        <h3>Upload Document</h3>
+        <input type="file" id="fileInput" accept=".pdf,.docx">
+        <input type="text" id="docId" placeholder="Document ID" value="demo-doc">
+        <button onclick="upload()">Upload & Process</button>
+        <div id="uploadResult" class="result"></div>
+    </div>
+
+    <div class="section">
+        <h3>Extract Entities</h3>
+        <button onclick="extractEntities()">Show Extracted Entities</button>
+        <div id="entitiesResult" class="result">Click the button to extract entities from your document.</div>
+    </div>
+
+    <div class="section">
+        <h3>Ask Questions</h3>
+        <textarea id="question" placeholder="Ask a question about the document...">What is the rent amount?</textarea>
+        <button onclick="askQuestion()">Ask Question</button>
+        <div id="answerResult" class="result">Ask a question to get an AI-powered answer.</div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            fetch('/api')
+                .then(response => response.json())
+                .then(data => console.log('API Test Success:', data))
+                .catch(error => console.error('API Test Error:', error));
+        };
+
+        async function upload() {
+            const file = document.getElementById('fileInput').files[0];
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            
+            if (!file) {
+                showResult('uploadResult', 'Please select a file first!', 'error');
+                return;
+            }
+
+            showResult('uploadResult', 'Processing document...', 'success');
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('doc_id', docId);
+                formData.append('action', 'ingest');
+
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('uploadResult', 
+                        `Document processed successfully!\n\nExtracted ${data.chunks} chunks\nFound ${data.entities.parties.length} parties, ${data.entities.amounts.length} amounts, ${data.entities.dates.length} dates`, 
+                        'success'
+                    );
+                } else {
+                    showResult('uploadResult', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('uploadResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function extractEntities() {
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            showResult('entitiesResult', 'Extracting entities...', 'success');
+
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'entities', doc_id: docId })
+                });
+                
+                const entities = await response.json();
+                
+                if (response.ok) {
+                    const result = `EXTRACTED ENTITIES
+
+PARTIES:
+${entities.parties.map(p => `• ${p}`).join('\n')}
+
+MONETARY AMOUNTS:
+${entities.amounts.map(a => `• ${a}`).join('\n')}
+
+DATES & DEADLINES:
+${entities.dates.map(d => `• ${d}`).join('\n')}
+
+KEY TERMS:
+${entities.terms.map(t => `• ${t}`).join('\n')}`;
+                    
+                    showResult('entitiesResult', result, 'success');
+                } else {
+                    showResult('entitiesResult', 'Error: ' + entities.error, 'error');
+                }
+            } catch (error) {
+                showResult('entitiesResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function askQuestion() {
+            const question = document.getElementById('question').value;
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            
+            if (!question.trim()) {
+                showResult('answerResult', 'Please enter a question!', 'error');
+                return;
+            }
+
+            showResult('answerResult', 'Thinking...', 'success');
+
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'ask', doc_id: docId, q: question })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('answerResult', data.answer, 'success');
+                } else {
+                    showResult('answerResult', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('answerResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result ' + (type || '');
+        }
+    </script>
+</body>
+</html>
