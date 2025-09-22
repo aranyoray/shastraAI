@@ -11,7 +11,7 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const userDocs = new Map();
 
 async function callAPI(action, docId, question = null, fileBuffer = null, filename = null) {
-  const apiUrl = process.env.API_URL || 'https://shastraai-api.vercel.app/api';
+  const apiUrl = process.env.API_URL || 'https://shastra-ai.vercel.app/api';
   
   try {
     if (action === 'ingest' && fileBuffer) {
