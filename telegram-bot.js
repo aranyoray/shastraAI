@@ -190,7 +190,7 @@ function getText(userId, key) {
 }
 
 async function callAPI(action, docId, question = null, fileBuffer = null, filename = null) {
-  const apiUrl = process.env.API_URL || 'https://shastraai-5ehqdc52q-aranyorays-projects.vercel.app/api';
+  const apiUrl = process.env.API_URL || 'https://shastraai-api.vercel.app/api';
   
   console.log(`API Call - Action: ${action}, DocId: ${docId}, Question: ${question}, HasFile: ${!!fileBuffer}`);
   
