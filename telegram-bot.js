@@ -189,6 +189,7 @@ function getText(userId, key) {
   return languages[lang][key] || languages.en[key];
 }
 
+
 async function callAPI(action, docId, question = null, fileBuffer = null, filename = null) {
   const apiUrl = process.env.API_URL || 'https://shastra-ai.vercel.app/api';
   
