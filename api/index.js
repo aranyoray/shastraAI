@@ -11,7 +11,7 @@ const upload = multer({
 });
 
 if (!process.env.GOOGLE_AI_API_KEY) {
-  console.warn('GOOGLE_AI_API_KEY not found. AI features will use fallback responses.');
+  console.warn('GOOGLE_AI_API_KEY not found. AI features disabled.');
 }
 const aiClient = process.env.GOOGLE_AI_API_KEY ? new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY) : null;
 
@@ -149,7 +149,7 @@ Format as valid JSON only.`;
           }
           
           const aiData = {
-            chunks: rawAiData.chunks || Math.max(1, Math.floor(documentText.length / 1000)),
+            chunks: rawAiData.chunks || 0,
             ...cleanEntityData(rawAiData)
           };
           
@@ -164,7 +164,7 @@ Format as valid JSON only.`;
           
           const response = {
             doc_id: docId,
-            chunks: aiData.chunks || Math.max(1, Math.floor(documentText.length / 1000)),
+            chunks: aiData.chunks || 0,
             message: "Document processed",
             entities: {
               parties: aiData.parties || [],

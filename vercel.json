@@ -6,6 +6,10 @@
       "use": "@vercel/static"
     },
     {
+      "src": "shastraAI_logo.png",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/index.js",
       "use": "@vercel/node"
     },
@@ -40,6 +44,10 @@
     {
       "src": "/api",
       "dest": "/api/index.js"
+    },
+    {
+      "src": "/shastraAI_logo.png",
+      "dest": "/shastraAI_logo.png"
     },
     {
       "src": "/(.*)",

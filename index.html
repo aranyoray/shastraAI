@@ -25,13 +25,32 @@
     </div>
 
     <div class="section">
-        <h3>Extract Entities</h3>
-        <button onclick="extractEntities()">Show Extracted Entities</button>
-        <div id="entitiesResult" class="result">Click the button to extract entities from your document.</div>
+        <h3>Extract Info</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button onclick="extractEntities()" style="background: #28a745; flex: 1;">Entities</button>
+            <button onclick="extractAmounts()" style="background: #28a745; flex: 1;">Amounts</button>
+            <button onclick="extractDates()" style="background: #28a745; flex: 1;">Dates</button>
+            <button onclick="extractDeadlines()" style="background: #28a745; flex: 1;">Deadlines</button>
+        </div>
+        <div id="entitiesResult" class="result">Click any button to extract information from your document.</div>
     </div>
 
     <div class="section">
         <h3>Ask Questions</h3>
+        <div style="margin-bottom: 10px;">
+            <label for="languageSelect">Language: </label>
+            <select id="languageSelect" onchange="changeLanguage()" style="padding: 5px; margin-left: 10px;">
+                <option value="en">English</option>
+                <option value="hi">Hindi (हिंदी)</option>
+                <option value="bn">Bengali (বাংলা)</option>
+                <option value="es">Spanish (Español)</option>
+                <option value="fr">French (Français)</option>
+                <option value="de">German (Deutsch)</option>
+                <option value="ja">Japanese (日本語)</option>
+                <option value="ko">Korean (한국어)</option>
+                <option value="zh">Chinese (中文)</option>
+            </select>
+        </div>
         <textarea id="question" placeholder="Ask a question about the document...">What is the rent amount?</textarea>
         <button onclick="askQuestion()">Ask Question</button>
         <div id="answerResult" class="result">Ask a question to get an AI-powered answer.</div>
@@ -153,6 +172,94 @@ ${entities.terms.map(t => `• ${t}`).join('\n')}`;
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'result ' + (type || '');
+        }
+
+        async function extractAmounts() {
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            showResult('entitiesResult', 'Extracting amounts...', 'success');
+
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'ask', doc_id: docId, q: 'List all monetary amounts, prices, fees, and financial figures mentioned in this document. Include currency symbols and context.' })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('entitiesResult', `MONETARY AMOUNTS FOUND:\n\n${data.answer}`, 'success');
+                } else {
+                    showResult('entitiesResult', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('entitiesResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function extractDates() {
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            showResult('entitiesResult', 'Extracting dates...', 'success');
+
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'ask', doc_id: docId, q: 'List all important dates mentioned in this document including start dates, end dates, deadlines, and any time-sensitive information.' })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('entitiesResult', `IMPORTANT DATES FOUND:\n\n${data.answer}`, 'success');
+                } else {
+                    showResult('entitiesResult', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('entitiesResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function extractDeadlines() {
+            const docId = document.getElementById('docId').value || 'demo-doc';
+            showResult('entitiesResult', 'Extracting deadlines...', 'success');
+
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'ask', doc_id: docId, q: 'Extract all critical deadlines, due dates, expiration dates, and time-sensitive obligations from this document. Focus on actionable deadlines.' })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('entitiesResult', `CRITICAL DEADLINES FOUND:\n\n${data.answer}`, 'success');
+                } else {
+                    showResult('entitiesResult', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showResult('entitiesResult', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function changeLanguage() {
+            const language = document.getElementById('languageSelect').value;
+            const question = document.getElementById('question');
+            
+            const translations = {
+                en: "What is the rent amount?",
+                hi: "किराये की राशि क्या है?",
+                bn: "ভাড়ার পরিমাণ কত?",
+                es: "¿Cuál es el monto del alquiler?",
+                fr: "Quel est le montant du loyer?",
+                de: "Wie hoch ist die Miete?",
+                ja: "家賃はいくらですか？",
+                ko: "임대료는 얼마인가요?",
+                zh: "租金是多少？"
+            };
+            
+            question.placeholder = translations[language] || translations.en;
         }
     </script>
 </body>
