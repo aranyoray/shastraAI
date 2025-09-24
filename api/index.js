@@ -207,10 +207,10 @@ DOCUMENT CONTENT:
 ${document.text.substring(0, 50000)} ${document.text.length > 50000 ? '... (truncated)' : ''}
 
 Return JSON with STRING arrays only:
-- parties: array of strings like ["John Smith (Landlord)", "Jane Doe (Tenant)"]
-- amounts: array of strings like ["$2,500.00 monthly rent", "$5,000.00 security deposit"]
-- dates: array of strings like ["January 1, 2024 (Lease Start)", "December 31, 2024 (Lease End)"]
-- terms: array of strings like ["12-month lease agreement", "No smoking policy"]
+- parties: array of strings with names and roles
+- amounts: array of strings with monetary values and context
+- dates: array of strings with dates and descriptions
+- terms: array of strings with key terms and conditions
 
 IMPORTANT: Each array must contain only STRING values, not objects. Format as valid JSON only.`;
           

@@ -554,15 +554,15 @@ bot.on('document', async (ctx) => {
     console.log(`Current userDocs map:`, Array.from(userDocs.entries()));
     
     let message = `Document processed successfully!\n\n`;
-    message += `Extracted ${result.chunks} chunks\n`;
-    message += `Found ${result.entities.parties.length} parties, ${result.entities.amounts.length} amounts, ${result.entities.dates.length} dates\n\n`;
-    message += `Now you can:\n`;
-    message += `• Use /entities to see detailed extraction\n`;
-    message += `• Use /amounts to see monetary values\n`;
-    message += `• Use /dates to see important dates\n`;
-    message += `• Use /deadlines to see critical deadlines\n`;
-    message += `• Use /ask <question> to ask questions\n`;
-    message += `• Use /help for more commands`;
+    message += `Document: ${filename}\n`;
+    message += `Status: Ready for analysis\n\n`;
+    message += `Available commands:\n`;
+    message += `• /entities - Extract all entities\n`;
+    message += `• /amounts - Show monetary values\n`;
+    message += `• /dates - Show important dates\n`;
+    message += `• /deadlines - Show critical deadlines\n`;
+    message += `• /ask <question> - Ask questions\n`;
+    message += `• /help - Show all commands`;
     
     ctx.reply(message, { parse_mode: 'Markdown' });
     

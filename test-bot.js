@@ -25,7 +25,7 @@ try {
     console.log(`   ID: ${botInfo.id}`);
     console.log('\n🎉 Bot setup is working correctly!');
     console.log('\n📝 Next steps:');
-    console.log('1. Set webhook: https://api.telegram.org/bot[YOUR_TOKEN]/setWebhook?url=https://shastraai-p48u54uuk-aranyorays-projects.vercel.app/api/telegram-webhook');
+    console.log('1. Set webhook: https://api.telegram.org/bot[YOUR_TOKEN]/setWebhook?url=https://shastra-ai.vercel.app/api/telegram-webhook');
     console.log('2. Test with /start command in your bot');
     process.exit(0);
   }).catch(error => {
